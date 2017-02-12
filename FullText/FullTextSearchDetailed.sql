@@ -1,4 +1,4 @@
-SELECT SERVERPROPERTY('IsNonGolden') -- RESULT: 1
+SELECT SERVERPROPERTY('IsNonGolden') -- RESULT: NULL
 SELECT SERVERPROPERTY('IsFullTextInstalled') -- RESULT: 1
 SELECT FULLTEXTSERVICEPROPERTY('VerifySignature') -- RESULT: 1
 SELECT FULLTEXTSERVICEPROPERTY('LoadOsResources') -- RESULT: 0
@@ -10,7 +10,7 @@ DECLARE MYCURSOR CURSOR FOR SELECT [LCID]  FROM sys.fulltext_languages
 OPEN MYCURSOR FETCH NEXT FROM MYCURSOR INTO @LCID 
 WHILE @@FETCH_STATUS = 0 
 BEGIN 
-	SELECT @CNT = COUNT(*) FROM sys.dm_fts_parser('"MICROSOFT SQL SERVER 2012 ROCKS. INSTALL-IT-IMMEDIATELY!!!"', @LCID,0,0) 
+	SELECT @CNT = COUNT(*) FROM sys.dm_fts_parser('"MICROSOFT SQL SERVER VNext ROCKS. INSTALL-IT-IMMEDIATELY!!!"', @LCID,0,0) 
 	IF @CNT =0 
 	BEGIN 
 		SELECT 'FAIL' 
@@ -25,9 +25,9 @@ DEALLOCATE MYCURSOR
 -- 1st TIME - ERROR: An error has occurred during the full-text query. Common causes include: word-breaking errors or timeout, FDHOST permissions/ACL issues, service account missing privileges, malfunctioning IFilters, communication channel issues with FDHost and sqlservr.exe, etc.
 -- 2nd TIME+ - PASS
 
-CREATE DATABASE foo
+CREATE DATABASE test
 GO
-USE foo
+USE test
 
 CREATE FULLTEXT CATALOG ftCatalog AS DEFAULT
 CREATE TABLE test (id int IDENTITY, text NVARCHAR(max), 
@@ -56,10 +56,10 @@ SELECT * FROM sys.fulltext_index_columns
 SELECT * FROM sys.fulltext_indexes 
 -- RESULT: PASS
 
-SELECT * FROM sys.dm_fts_index_keywords( DB_ID('foo'), OBJECT_ID('dbo.test') ) 
+SELECT * FROM sys.dm_fts_index_keywords( DB_ID('test'), OBJECT_ID('dbo.test') ) 
 -- RESULT: PASS
 
-SELECT * FROM sys.dm_fts_index_keywords_by_document(db_id('foo'), object_id('dbo.test'));  
+SELECT * FROM sys.dm_fts_index_keywords_by_document(db_id('test'), object_id('dbo.test'));  
 -- RESULT: PASS
 
 SELECT * FROM sys.dm_fts_index_population
@@ -74,10 +74,10 @@ SELECT * FROM sys.dm_fts_active_catalogs
 SELECT * FROM sys.dm_fts_fdhosts
 -- RESULT: PASS
 
-SELECT * FROM sys.dm_fts_index_keywords_by_property( DB_ID('foo'), OBJECT_ID('test') ) 
+SELECT * FROM sys.dm_fts_index_keywords_by_property( DB_ID('test'), OBJECT_ID('test') ) 
 --RESULT: No results.  Expected?
 
-SELECT * FROM sys.dm_fts_index_keywords_position_by_document( DB_ID('foo'), OBJECT_ID('test') ) 
+SELECT * FROM sys.dm_fts_index_keywords_position_by_document( DB_ID('test'), OBJECT_ID('test') ) 
 -- RESULT: PASS
 
 SELECT * FROM sys.dm_fts_memory_buffers
@@ -93,7 +93,7 @@ SELECT * FROM sys.dm_fts_semantic_similarity_population
 --RESULT: PASS
 
 
-sp_fulltext_service 'verify_signature', '0'
+sp_fulltext_service 'verify_signature', '1'
 SELECT FULLTEXTSERVICEPROPERTY('VerifySignature') -- RESULT: 0
 --RESULT: PASS, value changed from 1 to 0
 
@@ -141,8 +141,8 @@ EXEC sp_help_fulltext_system_components 'all'
 EXEC sp_help_fulltext_tables 'ftCatalog'
 --RESULT: PASS, 2 rows (test and test2 tables)
 
-/* - What's the plan for these?
-I think these will work, we just need to make the DB available from the .msi
+/* - Working out the plan on semantic search.  Current proposala is to include the .mdf/.ldf files in the mssql-server-fts package on Linux and not change anything for the Windows side.
+Once we have the DB files attached, these should just work
 EXEC sp_fulltext_semantic_register_language_statistics_db  
     [ @dbname = ] ‘database_name’;  
 GO  
@@ -174,7 +174,12 @@ CREATE FULLTEXT STOPLIST myStopList FROM SYSTEM STOPLIST;
 --RESULT: PASS
 
 SELECT * FROM sys.fulltext_stopwords
---RESULT: PASS, 15,289 rows
+--RESULT: PASS, 15,829 rows
+
+SELECT count(*) AS word_count, language_id AS lang_id FROM sys.fulltext_stopwords
+GROUP BY language_id
+ORDER BY word_count desc
+--RESULT: PASS, 46 languages
 
 SELECT * FROM sys.fulltext_stoplists
 --RESULT: PASS, myStopList exists
