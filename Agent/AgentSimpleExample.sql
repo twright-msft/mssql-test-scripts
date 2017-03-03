@@ -1,10 +1,14 @@
 --Run each EXEC  step separately
+CREATE DATABASE TestDB
+USE TestDB
+CREATE TABLE TestTable (TestData int)
+
 EXEC sp_add_jobstep  
-    @job_name = N'Agent Bug Bash',  
-    @step_name = N'Insert Values into Sales',  
+    @job_name = N'Agent Test Job',  
+    @step_name = N'Insert Data into TestTable',  
     @subsystem = N'TSQL', 
-    @database_name = N'SampleDB', 
-    @command = N'INSERT INTO dbo.Sales Values (1)',   
+    @database_name = N'TestDB', 
+    @command = N'INSERT INTO dbo.TestTable VALUES (1)',   
     @retry_attempts = 5,  
     @retry_interval = 5 ;  
 GO  
@@ -17,14 +21,17 @@ USE msdb ;
 GO  
  
 EXEC sp_attach_schedule  
-   @job_name = N'Agent Bug Bash',  
+   @job_name = N'Agent Test Job',  
    @schedule_name = N'Run Once';  
 GO  
  
 EXEC dbo.sp_add_jobserver  
-    @job_name = N'Agent Bug Bash';  
+    @job_name = N'Agent Test Job';  
 GO
  
 USE msdb
-EXEC dbo.sp_start_job N'Agent Bug Bash' ;  
+EXEC dbo.sp_start_job N'Agent Test Job' ;  
 GO
+
+--Confirm that a row has been added to the TestData table
+SELECT * FROM TestData
