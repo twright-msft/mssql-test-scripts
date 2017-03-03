@@ -1,4 +1,4 @@
-
+--Run each EXEC  step separately
 EXEC sp_add_jobstep  
     @job_name = N'Agent Bug Bash',  
     @step_name = N'Insert Values into Sales',  
