@@ -1,7 +1,15 @@
 --Run each EXEC  step separately
 CREATE DATABASE TestDB
+GO
+
 USE TestDB
+GO
+
 CREATE TABLE TestTable (TestData int)
+GO
+
+USE msdb; 
+GO
 
 EXEC sp_add_jobstep  
     @job_name = N'Agent Test Job',  
