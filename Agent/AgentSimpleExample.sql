@@ -11,6 +11,10 @@ GO
 USE msdb; 
 GO
 
+exec sp_add_job 
+@job_name = N'Agent Test Job'
+go
+
 EXEC sp_add_jobstep  
     @job_name = N'Agent Test Job',  
     @step_name = N'Insert Data into TestTable',  
