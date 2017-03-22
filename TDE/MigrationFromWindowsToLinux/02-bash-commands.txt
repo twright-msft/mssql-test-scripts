@@ -1,0 +1,20 @@
+# Navigate to the database backup files
+cd /mnt/c
+
+# Copy the database files from Windows -> Linux
+# Use your Linux machine's IP address, username, etc.
+scp TestDB.bak MyServerCert.cer MyServerCert-PrivateKey.pvk thmullan@ubuntu:~
+
+# Remote in to the Linux machine
+ssh thmullan@ubuntu
+
+# Update the file permissions so only SQL Server can access them
+sudo chown mssql:mssql TestDB.bak MyServerCert.cer MyServerCert-PrivateKey.pvk
+sudo chmod 640 TestDB.bak MyServerCert.cer MyServerCert-PrivateKey.pvk
+
+# Move the files to the SQL Server data directory
+sudo mv -t /var/opt/mssql/data/ TestDB.bak MyServerCert.cer MyServerCert-PrivateKey.pvk
+
+# Now use T-SQL to re-create the certificate and restore the database
+# Instructions are in file: 03-restore.sql
+
