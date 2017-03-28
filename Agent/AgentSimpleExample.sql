@@ -46,4 +46,5 @@ EXEC dbo.sp_start_job N'Agent Test Job' ;
 GO
 
 --Confirm that a row has been added to the TestData table
+USE TestDB
 SELECT * FROM TestData
