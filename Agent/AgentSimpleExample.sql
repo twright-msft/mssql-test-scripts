@@ -47,4 +47,5 @@ GO
 
 --Confirm that a row has been added to the TestData table
 USE TestDB
+GO
 SELECT * FROM TestData
