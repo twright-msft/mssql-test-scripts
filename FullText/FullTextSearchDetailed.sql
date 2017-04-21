@@ -94,8 +94,8 @@ SELECT * FROM sys.dm_fts_semantic_similarity_population
 
 
 sp_fulltext_service 'verify_signature', '1'
-SELECT FULLTEXTSERVICEPROPERTY('VerifySignature') -- RESULT: 0
---RESULT: PASS, value changed from 1 to 0
+SELECT FULLTEXTSERVICEPROPERTY('VerifySignature') -- RESULT: 1
+--RESULT: PASS, value changed from 0 to 1
 
 
 CREATE TABLE test2 (id int IDENTITY, binary_text varbinary(max), text NVARCHAR(max),
@@ -144,7 +144,7 @@ EXEC sp_help_fulltext_tables 'ftCatalog'
 /* - Working out the plan on semantic search.  Current proposala is to include the .mdf/.ldf files in the mssql-server-fts package on Linux and not change anything for the Windows side.
 Once we have the DB files attached, these should just work
 EXEC sp_fulltext_semantic_register_language_statistics_db  
-    [ @dbname = ] ‘database_name’;  
+    [ @dbname = ] â€˜database_nameâ€™;  
 GO  
 EXEC sp_fulltext_semantic_unregister_language_statistics_db;  
 GO
