@@ -21,9 +21,7 @@ END
 SELECT 'PASS' 
 CLOSE MYCURSOR 
 DEALLOCATE MYCURSOR
--- RESULT:
--- 1st TIME - ERROR: An error has occurred during the full-text query. Common causes include: word-breaking errors or timeout, FDHOST permissions/ACL issues, service account missing privileges, malfunctioning IFilters, communication channel issues with FDHost and sqlservr.exe, etc.
--- 2nd TIME+ - PASS
+-- RESULT: PASS
 
 CREATE DATABASE test
 GO
