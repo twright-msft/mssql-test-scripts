@@ -161,6 +161,8 @@ AFFECTS A, MACHINE M1, ASSEMBLES A1, PRODUCT P, FACTORY FA, PRODUCERS PP
 WHERE MATCH(O-(MO)->M-(R)->F-(A)->M1-(A1)->P<-(PP)-FA)
 GO
 
+-- We can also leverage other advanced features of SQL Server such as clustered columnstore indexes on these tables
+CREATE CLUSTERED COLUMNSTORE INDEX index_machine ON MACHINE
 
 
 
