@@ -36,5 +36,5 @@ EXEC dbo.sp_add_jobserver
 @server_name = N'(LOCAL)';
 GO
 
-EXEC dbo.sp_start_job N'Daily SampleDB Backup';
+EXEC dbo.sp_start_job N'Daily SampleDB Backup' ;
 GO
