@@ -26,7 +26,7 @@ EXEC sp_add_jobstep
 GO  
  
 EXEC dbo.sp_add_schedule  
-    @schedule_name = N'Run Once',  
+    @schedule_name = N'Run One Time',  
     @freq_type = 1,  
     @active_start_time = 133000 ;  
 USE msdb ;  
@@ -34,7 +34,7 @@ GO
  
 EXEC sp_attach_schedule  
    @job_name = N'Agent Test Job',  
-   @schedule_name = N'Run Once';  
+   @schedule_name = N'Run One Time';  
 GO  
  
 EXEC dbo.sp_add_jobserver  
